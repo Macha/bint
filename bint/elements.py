@@ -31,21 +31,21 @@ class PrintStatement(Statement):
         print()
 
     def __str__(self):
-        return "<PrintStatement: %s>" % str(self.values)
+        return '<PrintStatement: %s>' % str(self.values)
             
 class InputStatement(Statement):
     """ Represents a INPUT statement."""
 
-    def __init__(self, name):
+    def __init__(self, target):
         """ Sets up an INPUT statement to run later. """
-        self.name = name
+        self.target = target
 
     def run(self, scope):
         """ Runs an input statement. """
-        scope.variables[self.name] = input()
+        scope.variables[self.target] = int(input())
 
     def __str__(self):
-        return "<InputStatement: %s>" % self.name
+        return '<InputStatement: %s>' % self.name
 
 class AssignmentStatement(Statement): 
     """ Represents an assignment statement. """
@@ -56,15 +56,13 @@ class AssignmentStatement(Statement):
         logging.debug('Found assignment of %s with val %s', target, value)
 
     def run(self, scope):
-        if self.target not in scope.variables:
+        if self.target.name not in scope.variables:
             raise NoSuchVariableException('%s does not exist' % self.target.name)
         else:
-            self.target.assign(scope, self.value.eval(scope))
-            logging.debug('Running assignment of %s to %s', self.target,
-                    self.value)
+            scope.variables[self.target.name] = self.value.eval(scope)
 
     def __str__(self):
-        return "<AssignmentStatement: %s %s>" % (self.target, self.value)
+        return '<AssignmentStatement: %s %s>' % (self.target, self.value)
 
 class IfStatement(Statement):
     """ Represents an if statement. """
@@ -76,11 +74,12 @@ class IfStatement(Statement):
     def run(self, scope):
         """ Runs an if statement. """
         if self.cond.eval(scope):
+            logging.debug('Running If Statement contents')
             for statement in self.statements:
                 statement.run(scope)
 
     def __str__(self):
-        return "<IfStatement: %s %s>" % (self.cond, self.statements)
+        return '<IfStatement: %s %s>' % (self.cond, self.statements)
 
 class WhileStatement(Statement):
     """ Represents a while statement. """
@@ -99,7 +98,7 @@ class WhileStatement(Statement):
                 break
 
     def __str__(self):
-        return "<WhileStatement: %s %s>" % (self.cond, self.statements)
+        return '<WhileStatement: %s %s>' % (self.cond, self.statements)
 
 class Expression:
     """ Represents any sort of expression. """
@@ -116,13 +115,14 @@ class Expression:
     def eval(self, scope):
         """ Gets the value of a expression. """
         logging.debug('Applying %s to %s and %s', self.op,
-                self.first_value,
-                self.second_value)
-        return self.ops[self.op](self.first_value.eval(scope),
+                self.first_value.eval(scope),
                 self.second_value.eval(scope))
+        result = self.ops[self.op](self.first_value.eval(scope), 
+                self.second_value.eval(scope))
+        return result
 
     def __str__(self):
-        return "<Expression: %s %s %s>" % (self.first_value, self.op,
+        return '<Expression: %s %s %s>' % (self.first_value, self.op,
                 self.second_value)
 
 class MathExpression(Expression):

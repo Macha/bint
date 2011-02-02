@@ -9,7 +9,6 @@ class Bint:
         self.variables = {}
         logging.info('About to parse %s', filename) 
         self.program = parser.BintParser(filename).parse()
-        print(self.program)
 
     def run(self):
         """ Runs a program that has been loaded into this Bint instance. """

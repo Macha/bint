@@ -1,1 +1,1 @@
-A simple interpreter, written in Python 3.
+An unfinished WIP simple interpreter, written in Python 3.

@@ -279,5 +279,7 @@ class BintParser:
                 num_quotes = 0
 
             current_char += 1
-
-        return LiteralValue(''.join(chars)), parsed_chars
+        string_value = ''.join(chars)
+        # Reverse padding intended for  operator commas
+        string_value = string_value.replace(' , ', ',') 
+        return LiteralValue(string_value), parsed_chars

@@ -1,0 +1,29 @@
+PRINT "Number guessing game"
+PRINT "Think of a number from 1 to 100"
+LET lo = 1
+LET hi = 100
+PRINT "Type 1 if your number is less, type 2 if it's more, or 0 if equal"
+
+WHILE lo <= hi
+   LET m = (lo + hi) \ 2
+
+   PRINT "Is it", m, "?"
+   INPUT ans
+
+   IF ans = 1 THEN
+       hi = m - 1
+   END IF
+   IF ans = 2 THEN
+       lo = m + 1
+   END IF
+   IF ans = 0 THEN
+       lo = hi + 1
+   END IF
+WEND
+
+IF ans = 0 THEN
+   PRINT "I found it!"
+END IF
+IF ans <> 0 THEN
+   PRINT "You cheated!"
+END IF

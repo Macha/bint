@@ -1,0 +1,5 @@
+PRINT 10
+
+IF 9 > 3 THEN
+	PRINT 10
+END IF

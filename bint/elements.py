@@ -166,7 +166,7 @@ class VariableValue():
         self.name = name
 
     def assign(self, scope, value):
-        scope.variables[self.name] = value
+        scope.variables[self.name] = value.eval(scope)
 
     def eval(self, scope):
         return scope.variables[self.name]

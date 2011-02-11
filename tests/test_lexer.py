@@ -1,6 +1,7 @@
 import unittest
 from bint import tokens, lexer
 
+
 class BasicExpression(unittest.TestCase):
     
     def test_constant_expression(self):
@@ -18,7 +19,6 @@ class BasicExpression(unittest.TestCase):
             ('mod', [tokens.OpToken('mod')]),
             ('char_stuff2', [tokens.IdentifierToken('char_stuff2')]),
             ('+', [tokens.OpToken('+')]))
-
 
         self.complex_compare(constant_expressions)
 

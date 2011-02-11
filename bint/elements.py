@@ -2,9 +2,13 @@ import logging
 import operator
 
 
-class NoSuchVariableException(Exception): pass
+class NoSuchVariableException(Exception):
+    pass
 
-class Statement: pass
+
+class Statement:
+    pass
+
 
 class LetStatement(Statement):
     """Represents a LET statement, which sets a variable. """
@@ -17,6 +21,7 @@ class LetStatement(Statement):
         logging.debug('Creating %s with value %s', self.name,
                 initial_value)
         scope.variables[self.name] = initial_value
+
 
 class PrintStatement(Statement):
     """Represents a print statement. """
@@ -31,7 +36,8 @@ class PrintStatement(Statement):
 
     def __str__(self):
         return '<PrintStatement: %s>' % str(self.values)
-            
+
+
 class InputStatement(Statement):
     """ Represents a INPUT statement."""
 
@@ -46,7 +52,8 @@ class InputStatement(Statement):
     def __str__(self):
         return '<InputStatement: %s>' % self.name
 
-class AssignmentStatement(Statement): 
+
+class AssignmentStatement(Statement):
     """ Represents an assignment statement. """
     def __init__(self, target, value):
         self.target = target
@@ -56,12 +63,14 @@ class AssignmentStatement(Statement):
 
     def run(self, scope):
         if self.target.name not in scope.variables:
-            raise NoSuchVariableException('%s does not exist' % self.target.name)
+            raise NoSuchVariableException('%s does not exist'
+                    % self.target.name)
         else:
             scope.variables[self.target.name] = self.value.eval(scope)
 
     def __str__(self):
         return '<AssignmentStatement: %s %s>' % (self.target, self.value)
+
 
 class IfStatement(Statement):
     """ Represents an if statement. """
@@ -79,6 +88,7 @@ class IfStatement(Statement):
 
     def __str__(self):
         return '<IfStatement: %s %s>' % (self.cond, self.statements)
+
 
 class WhileStatement(Statement):
     """ Represents a while statement. """
@@ -99,11 +109,12 @@ class WhileStatement(Statement):
     def __str__(self):
         return '<WhileStatement: %s %s>' % (self.cond, self.statements)
 
+
 class Expression:
     """ Represents any sort of expression. """
 
     def __init__(self, first_value, op, second_value):
-        """ 
+        """
         Sets up the expression, where first_value and second_value are
         integers and op is a string.
         """
@@ -116,13 +127,14 @@ class Expression:
         logging.debug('Applying %s to %s and %s', self.op,
                 self.first_value.eval(scope),
                 self.second_value.eval(scope))
-        result = self.ops[self.op](self.first_value.eval(scope), 
+        result = self.ops[self.op](self.first_value.eval(scope),
                 self.second_value.eval(scope))
         return result
 
     def __str__(self):
         return '<Expression: %s %s %s>' % (self.first_value, self.op,
                 self.second_value)
+
 
 class MathExpression(Expression):
     """Represents a math expression."""
@@ -146,7 +158,10 @@ class BooleanExpression(Expression):
             '=': operator.eq
             }
 
-class Value: pass
+
+class Value:
+    pass
+
 
 class LiteralValue():
     """ Represents a literal. """
@@ -158,6 +173,7 @@ class LiteralValue():
 
     def __str__(self):
         return '<Literal: %s>' % self.value
+
 
 class VariableValue():
     """ Represents a variable. """
@@ -172,4 +188,3 @@ class VariableValue():
 
     def __str__(self):
         return '<Variable: %s>' % self.name
-

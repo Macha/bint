@@ -1,8 +1,14 @@
 from bint.elements import *
 import logging
 
-class InvalidExpressionException(Exception): pass
-class InvalidStatementException(Exception): pass
+
+class InvalidExpressionException(Exception):
+    pass
+
+
+class InvalidStatementException(Exception):
+    pass
+
 
 class BintParser:
     """ This class parses a bint file into a python object. """
@@ -20,7 +26,6 @@ class BintParser:
             self.lines = source.readlines()
             self.current_line = 0
             self.statements = []
-            
 
     def parse(self):
         """ Parses the currently loaded file. """
@@ -30,35 +35,35 @@ class BintParser:
             statement = self.read_statement()
             if statement is not None:
                 self.statements.append(statement)
-        
-        return self.statements
 
+        return self.statements
 
     def read_statement(self):
         """ Reads a statement of a unknown type. """
         parse_line = self.lines[self.current_line].strip()
-        
+
         # Yes, I know this sucks, and there probably is a better way to handle
         # it
-        for special in [',', '+', '-', '*', '\\', '<=', '>=', '<>', '<=', '>=']:
-            parse_line = self.lines[self.current_line] = parse_line.replace(special, 
-                    ' %s ' % special)
+        for special in [',', '+', '-', '*', '\\',
+                '<=', '>=', '<>', '<=', '>=']:
+            parse_line = self.lines[self.current_line] = \
+            parse_line.replace(special, ' %s ' % special)
 
         # Reconnect borken operators
         for fix_needing_special, fixed in [
-                ('<  =', '<='), 
-                ('>  =', '>='), 
+                ('<  =', '<='),
+                ('>  =', '>='),
                 ('<  >', '<>'),
             ]:
             parse_line = self.lines[self.current_line] = parse_line.replace(
                     fix_needing_special, fixed)
-        
+
         for statement in self.statement_matches:
             if parse_line.startswith(statement[0]):
                 return_val = statement[1]()
                 self.current_line += 1
                 return return_val
-        
+
         # Assignment statements contain no unique words, identified as the
         # remaining option. Will need to be changed if further statements are
         # added.
@@ -66,9 +71,8 @@ class BintParser:
             return_val = self.read_assignment()
             self.current_line += 1
             return return_val
-        else: # Just whitespace
+        else:  # Just whitespace
             self.current_line += 1
-
 
     def read_assignment(self):
         """ Reads in an assignment statement. """
@@ -83,7 +87,6 @@ class BintParser:
             value = self.read_expression(remaining.strip(' \t='))
             return AssignmentStatement(target, value)
 
-
     def read_input(self):
         """ Reads in input statement. """
         assert('INPUT' in self.lines[self.current_line])
@@ -92,13 +95,12 @@ class BintParser:
         logging.debug('Found input statement for %s', parse_line)
         return InputStatement(parse_line)
 
-
     def read_print(self):
         """ Reads a print statement. """
         assert('PRINT' in self.lines[self.current_line])
         parse_line = self.lines[self.current_line]
         parse_line = parse_line.replace('PRINT', '').strip()
-        
+
         elements = []
         logging.debug('Parsing for PRINT')
         while True:
@@ -106,24 +108,22 @@ class BintParser:
             logging.debug('Adding element %s to print statement', element)
             parse_line = parse_line.strip()
             elements.append(element)
-            
+
             if not parse_line.startswith(','):
                 break
             else:
-                parse_line = parse_line[1:] # Drop the comma for next pass
+                parse_line = parse_line[1:]  # Drop the comma for next pass
 
         return PrintStatement(elements)
-
 
     def read_let(self):
         """ Reads a let statement. """
         assert('LET' in self.lines[self.current_line])
         parts = self.lines[self.current_line].split()
-        # Format is LET(0) NAME(1) =(2) VALUE(3...)
+        #  Format is LET(0) NAME(1) =(2) VALUE(3...)
         name = parts[1]
         value = self.read_expression(' '.join(parts[3:]))
         return LetStatement(name, value)
-
 
     def read_if(self):
         """ Reads an if statement. """
@@ -132,7 +132,7 @@ class BintParser:
         parse_line = parse_line.replace('IF', '')
         parse_line = parse_line.replace('THEN', '')
         cond = self.read_expression(parse_line)
-        
+
         self.current_line += 1
 
         statements = []
@@ -142,7 +142,6 @@ class BintParser:
                 statements.append(statement)
 
         return IfStatement(cond, statements)
-
 
     def read_while(self):
         """ Reads a while statement. """
@@ -162,7 +161,6 @@ class BintParser:
 
         return WhileStatement(cond, statements)
 
-
     def read_expression(self, expr):
         """ Reads an expression. """
         logging.debug('Reading expression %s', expr)
@@ -174,7 +172,7 @@ class BintParser:
 
         op = words[0]
         logging.debug('Got op %s', op)
-        
+
         second_part = self.read_element(' '.join(words[1:]))[0]
         if op in ['+', '-', '*', '\\', 'mod']:
             return MathExpression(first_part, op, second_part)
@@ -183,9 +181,8 @@ class BintParser:
         else:
             raise InvalidExpressionException('Unsupported operator')
 
-
     def read_element(self, expr):
-        """ 
+        """
         Reads a single element. Returns a tuple of the element that was
         read, and the remaining characters in the argument.
         """
@@ -213,7 +210,6 @@ class BintParser:
         else:
             raise InvalidExpressionException('Invalid element %s' % words[0])
 
-
     def get_inner_expression(self, expr):
         """ Gets an inner expression within a larger expression. """
         assert(expr[0] == '(')
@@ -224,14 +220,14 @@ class BintParser:
 
         for char in expr[1:]:
             parsed_chars += 1
-            if char == '(': # Ignore inner sub-expressions for now.
+            if char == '(':  # Ignore inner sub-expressions for now.
                 num_exprs += 1
                 chars.append(char)
             elif char == ')':
                 num_exprs -= 1
                 if num_exprs == 0:
                     parsed_chars += 1
-                    break # And we're done
+                    break  # And we're done
                 else:
                     chars.append(char)
             else:
@@ -239,17 +235,17 @@ class BintParser:
 
         # If we have too many parens
         if num_exprs != 0:
-            raise InvalidExpressionException('Unbalanced parentheses on line %s',
+            raise InvalidExpressionException(
+                    'Unbalanced parentheses on line %s',
                     self.current_line)
         else:
-            inner_expression = ''.join(chars) # Strip parens out
+            inner_expression = ''.join(chars)  # Strip parens out
             return inner_expression, parsed_chars
 
-
     def read_string(self, expr):
-        """ 
+        """
         Reads in a string from an expression. strings are inside quotes,
-        and quotes in strings are escaped by repeating them. 
+        and quotes in strings are escaped by repeating them.
         """
         assert(expr[0] == '"')
         logging.debug('Reading %s as string', expr)
@@ -260,13 +256,12 @@ class BintParser:
         while current_char < len(expr):
             char = expr[current_char]
             parsed_chars += 1
-            
+
             # Handle strings at the end of expressions
             try:
                 next_char = expr[current_char + 1]
             except IndexError:
                 next_char = ''
-
 
             if char != '"':
                 chars.append(char)
@@ -279,7 +274,8 @@ class BintParser:
                 num_quotes = 0
 
             current_char += 1
+
         string_value = ''.join(chars)
         # Reverse padding intended for  operator commas
-        string_value = string_value.replace(' , ', ',') 
+        string_value = string_value.replace(' , ', ',')
         return LiteralValue(string_value), parsed_chars

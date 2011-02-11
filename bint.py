@@ -1,13 +1,15 @@
 #!/usr/bin/python
 import logging
 import sys
-from bint import parser, elements
+from bint import parser
+
+
 class Bint:
     """This class interprets and runs a small segment of basic."""
 
     def __init__(self, filename):
         self.variables = {}
-        logging.info('About to parse %s', filename) 
+        logging.info('About to parse %s', filename)
         self.program = parser.BintParser(filename).parse()
 
     def run(self):

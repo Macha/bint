@@ -1,5 +1,5 @@
 import unittest
-from bint import tokens, tokeniser
+from bint import tokens, lexer
 
 class BasicExpression(unittest.TestCase):
     
@@ -106,10 +106,10 @@ class BasicExpression(unittest.TestCase):
     def complex_compare(self, comparisons):
         """ Compares an tuple of tuples of the format (input, output) to the
         correct values. """
-        my_tokeniser = tokeniser.Tokeniser()
+        my_lexer = lexer.BintLexer()
         for compare in comparisons:
             print('Testing {}'.format(compare[0]))
-            actual_result = my_tokeniser.tokenise(compare[0])
+            actual_result = my_lexer.tokenise(compare[0])
             expected_result = compare[1]
 
             self.assertEqual(len(actual_result), len(expected_result))

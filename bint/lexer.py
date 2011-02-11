@@ -2,7 +2,7 @@ from bint import tokens
 
 class EndOfTokenisation(Exception): pass
 
-class Tokeniser:
+class BintLexer:
     operator_chars = ['m', 'o', 'd', '+', '-', '*',
             '\\', '<', '>', '=', ',', '(', ')']
        

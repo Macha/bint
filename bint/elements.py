@@ -5,7 +5,6 @@ import operator
 class NoSuchVariableException(Exception): pass
 
 class Statement: pass
-    
 
 class LetStatement(Statement):
     """Represents a LET statement, which sets a variable. """

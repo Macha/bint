@@ -1,1 +1,1 @@
-An unfinished WIP simple interpreter, written in Python 3.
+An simple interpreter for a basic-like language, written in Python 3. This is just a program to get a view into writing interpreters, and doesn't have any practical use. The only purpose of this repo is so people giving feedback can easily see the code.

@@ -12,11 +12,14 @@ class Token:
         return not self.__eq__(other)
 
     def __str__(self):
-        return '<{}: {}>'.format(self.__class__, self.value)
+        return '<{}: {}>'.format(self.__module__, self.__class__.__name__, repr(self.value))
 
     def __repr__(self):
-        return str(self)
-
+        return '{}.{}({})'.format(
+                self.__module__,
+                self.__class__.__name__,
+                repr(self.value)
+            )
 
 class IdentifierToken(Token):
     pass
